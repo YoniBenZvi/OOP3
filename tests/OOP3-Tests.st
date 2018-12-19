@@ -2,7 +2,7 @@ TestCase subclass: #OOP3Test	instanceVariableNames: ''	classVariableNames: ''
 	self should: aBlock raise: AssertionFailure  withExceptionDo:  [:e | self assert: (e messageText = aMessage) ]. 
 	
 	
-! !!OOP3Test methodsFor: 'as yet unclassified' stamp: 'AS 12/15/2017 23:14'!setUp
+! !!OOP3Test methodsFor: 'as yet unclassified' stamp: 'Y.B.Z 12/19/2018 18:42'!setUp
 MyObject instVarNamed: 'isInterface' put: false.
 MyObject instVarNamed: 'behavesLike' put: {}.
 
@@ -11,7 +11,7 @@ MyObject instVarNamed: 'behavesLike' put: {}.
 (Smalltalk hasClassNamed: #B) ifTrue: [Smalltalk removeClassNamed: #B].
 (Smalltalk hasClassNamed: #C) ifTrue: [Smalltalk removeClassNamed: #C].
 (Smalltalk hasClassNamed: #D) ifTrue: [Smalltalk removeClassNamed: #D].
-(Smalltalk hasClassNamed: #E) ifTrue: [Smalltalk removeClassNamed: #E].
+(Smalltalk hasClassNamed: #E) ifTrue: [Smalltalk removeClassNamed: #E].(Smalltalk hasClassNamed: #F) ifTrue: [Smalltalk removeClassNamed: #F].(Smalltalk hasClassNamed: #G) ifTrue: [Smalltalk removeClassNamed: #G].
 (Smalltalk hasClassNamed: #CD) ifTrue: [Smalltalk removeClassNamed: #CD].
 (Smalltalk hasClassNamed: #AA) ifTrue: [Smalltalk removeClassNamed: #AA].
 (Smalltalk hasClassNamed: #AB) ifTrue: [Smalltalk removeClassNamed: #AB].
@@ -681,7 +681,7 @@ self expectErrorFrom: [
 ] withErrMessage: 'Classes can not derive from an interface!!'.
 
 
-! !!OOP3Test methodsFor: 'as yet unclassified' stamp: 'LP 12/11/2017 20:05'!testSubclassCreationNoMethods
+! !!OOP3Test methodsFor: 'as yet unclassified' stamp: 'Y.B.Z 12/19/2018 18:44'!testSubclassCreationNoMethods
 | newClass |
 
 "Create old-style class:"
@@ -726,5 +726,5 @@ self assert: ((C instVarNames) includes: 'y').
 self assert: ((C instVarNames) includes: 'z').
 
 
-
+(Smalltalk hasClassNamed: #A) ifTrue: [Smalltalk removeClassNamed: #A].(Smalltalk hasClassNamed: #B) ifTrue: [Smalltalk removeClassNamed: #B].(Smalltalk hasClassNamed: #C) ifTrue: [Smalltalk removeClassNamed: #C].(Smalltalk hasClassNamed: #IA) ifTrue: [Smalltalk removeClassNamed: #IA].
 ! !
