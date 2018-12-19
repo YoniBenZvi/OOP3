@@ -15,9 +15,11 @@ Object subclass: #MyObject	instanceVariableNames: ''	classVariableNames: ''	p
 					ifFalse:[boolFlag := tmpIF isKindOf: aClassOrInterface]
 				].		
 		].
-	 ^boolFlag.! !"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!MyObject class	instanceVariableNames: 'behavesLike isInterface'!!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/15/2018 20:27'!ambiguities
-	|bLikeIFs ambiguitiesCollection allOfMethods|
-	"should be checked if self isn't an interface?"
+	 ^boolFlag.! !"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!MyObject class	instanceVariableNames: 'behavesLike isInterface'!!MyObject class methodsFor: 'generate' stamp: 'Y.B.Z 12/19/2018 13:11'!new	self isInterface	ifTrue: [AssertionFailure signal: 'Interfaces can not be instantiated!!'].
+	self behavesLike do: [:tmpIF | 		(self implementsInterface: tmpIF)		 ifFalse: [AssertionFailure signal: 'Can not instantiate an Abstract class!!'].
+	].
+	^ self basicNew initialize! !!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/19/2018 13:16'!ambiguities
+	|bLikeIFs ambiguitiesCollection allOfMethods|	
 	bLikeIFs := self behavesLike.
 	ambiguitiesCollection := Set new.
 	allOfMethods := Set new.
@@ -34,8 +36,8 @@ Object subclass: #MyObject	instanceVariableNames: ''	classVariableNames: ''	p
 	^(ambiguitiesCollection asSortedCollection)! !!MyObject class methodsFor: 'interface' stamp: 'compile:where: 12/7/2018 20:05'!behavesLike
 	(self class = MyObject class) 
 		ifTrue: [^(Set new).]
-		ifFalse: [^behavesLike.].! !!MyObject class methodsFor: 'interface' stamp: 'a 12/18/2018 22:49'!implementsInterface: anInterface		|implements|		implements := true.		"should run over all the selectors of self and self's behavesLike iterfaces? - yes you are correct, fixed it"		(anInterface behavesLike) do:[ :tmpIF |			tmpIF selectorsDo:[ :tmpSelector | "selectorsDo: iterate over father's selectors?"				(self methodIsImplemented: tmpSelector asString)				ifFalse: [implements := false.]			].].		^implements.! !!MyObject class methodsFor: 'interface' stamp: 'a 12/18/2018 22:52'!isImplemented
-	|MyObjectSubclasses classesBehavingLikeSelf IFIsImplemented aSubclassImplementsSelf |
+		ifFalse: [^behavesLike.].! !!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/19/2018 13:13'!implementsInterface: anInterface		|implements|		implements := true.		(anInterface behavesLike) do:[ :tmpIF |			tmpIF selectorsDo:[ :tmpSelector | 				(self methodIsImplemented: tmpSelector asString)				ifFalse: [implements := false.]			].].		^implements.! !!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/19/2018 13:10'!isImplemented
+	|MyObjectSubclasses classesBehavingLikeSelf aSubclassImplementsSelf |
 	(self isInterface) ifFalse: [AssertionFailure signal: self asString , ' is not an interface!!'].
 	MyObjectSubclasses := MyObject allSubclasses.
 	classesBehavingLikeSelf := Set new.
@@ -46,14 +48,7 @@ Object subclass: #MyObject	instanceVariableNames: ''	classVariableNames: ''	p
 				ifTrue: [classesBehavingLikeSelf add: subclass.].
 			].
 	].
-	aSubclassImplementsSelf := classesBehavingLikeSelf collect:[:tmpSubclass | 		tmpSubclass implementsInterface: self.
-		"IFIsImplemented := true."
-		"should run over all the selectors of self and self's behavesLike iterfaces?"
-	"	self selectorsDo:[ :tmpSelector | selectorsDo: iterate over father's selectors?
-			(tmpSubclass methodIsImplemented: tmpSelector asString)
-			ifFalse: [IFIsImplemented := false.]
-		].
-		IFIsImplemented."	].
+	aSubclassImplementsSelf := classesBehavingLikeSelf collect:[:tmpSubclass | 		tmpSubclass implementsInterface: self.	].
 	^(aSubclassImplementsSelf includes: true).! !!MyObject class methodsFor: 'interface' stamp: 'compile:where: 12/7/2018 20:06'!isInterface
 	(self class = MyObject class) 
 		ifTrue: [^false.]
@@ -68,7 +63,7 @@ category: aCategoryName
 			instanceVariableNames: instVarNames 
 			classVariableNames: classVarNames 
 			poolDictionaries: poolDictionaries
-			category: aCategoryName).! !!MyObject class methodsFor: 'interface' stamp: 'compile:where: 12/18/2018 21:33'!subclass: aSubclassName 
+			category: aCategoryName).! !!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/19/2018 13:04'!subclass: aSubclassName 
 isInterface: isInterface 
 behavesLike: aCollection 
 instanceVariableNames: instVarNames 
@@ -93,13 +88,7 @@ category: aCategoryName
 			on: Error
 			do: [AssertionFailure signal: 'Can not behave like a non-interface!!'].
 		].
-	"super or self? not sure - i tried with self, but didn't understand why it doesn't work as expected. 
-	now i understand that it's because we redefine that function... so i did a similar trick to the one with compile: "
-	"newClass := (self subclass: aSubclassName
-    				 instanceVariableNames: instVarNames
-			       classVariableNames: classVarNames
-			       poolDictionaries: poolDictionaries
-			       category: aCategoryName)."
+
 	newClass := (ClassBuilder new)
 		superclass: self
 		subclass: aSubclassName
@@ -109,10 +98,9 @@ category: aCategoryName
 		category: aCategoryName.
 	(newClass)  instVarNamed: 'behavesLike' put: (Set new);
 				instVarNamed: 'isInterface' put: isInterface.
-	behavesCollection := self behavesLike.
+	behavesCollection := Set new..
 	isInterface ifTrue: [behavesCollection add: newClass].
-	"add behavesLike of self?"
-	aCollection do:[:tmpClass | behavesCollection add: tmpClass.
+	(aCollection addAll: self behavesLike) do:[:tmpClass | behavesCollection add: tmpClass.
 		(tmpClass behavesLike) do: [:x| behavesCollection add: x.].].
 	(newClass)  instVarNamed: 'behavesLike' put: (behavesCollection).
 	^(newClass).! !!MyObject class methodsFor: 'compiling' stamp: 'compile:where: 12/10/2018 11:39'!compile: code
@@ -161,18 +149,7 @@ category: aCategoryName
 	i to: (sourceCodeLinesArray size) do:
 			[:x | newCode := newCode, addTab, (sourceCodeLinesArray at:x), endL].
 	^newCode.
-! !!MyObject class methodsFor: 'generate' stamp: 'a 12/18/2018 22:54'!new
-	"(self isInterface and: [(self allInstances size) = 1])" "the check 'allInstances size' is not good enough for the purpose of the assignment"	self isInterface "why isn't that enough?"	ifTrue: [AssertionFailure signal: 'Interfaces can not be instantiated!!'].
-	self behavesLike do: [:tmpIF | 		(self implementsInterface: tmpIF)		 ifFalse: [AssertionFailure signal: 'Can not instantiate an Abstract class!!'].
-		"tmpIF selectorsDo:[ :tmpSelector | same notes as isImplemented method
-			(self methodIsImplemented: tmpSelector asString)
-			ifFalse: [
-				((self allInstances size) = 1) same note as above
-				ifTrue:[AssertionFailure signal: 'Can not instantiate an Abstract class!!'].
-			].
-		]."
-	].
-	^ self basicNew initialize! !!MyObject class methodsFor: 'auxiliary' stamp: 'compile:where: 12/10/2018 11:34'!insertEmptyMethodMarker: code
+! !!MyObject class methodsFor: 'auxiliary' stamp: 'compile:where: 12/10/2018 11:34'!insertEmptyMethodMarker: code
 	|endL addTab|
 	endL := Character cr asString. addTab := Character tab asString.
 	^(code , endL, addTab, '"@EMPTY_METHOD@"', endL)! !!MyObject class methodsFor: 'auxiliary' stamp: 'compile:where: 12/10/2018 11:28'!methodIsEmpty: aSourceCode
@@ -188,4 +165,4 @@ category: aCategoryName
 				ifFalse:[	^superclass methodIsImplemented: aSelector.]
 				.]
 			.].
-! !
+! !
