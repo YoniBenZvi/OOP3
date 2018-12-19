@@ -162,8 +162,7 @@ category: aCategoryName
 			[:x | newCode := newCode, addTab, (sourceCodeLinesArray at:x), endL].
 	^newCode.
 ! !!MyObject class methodsFor: 'generate' stamp: 'a 12/18/2018 22:54'!new
-	(self isInterface and: [(self allInstances size) = 1]) "the check 'allInstances size' is not good enough for the purpose of the assignment"
-	ifTrue: [AssertionFailure signal: 'Interfaces can not be instantiated!!'].
+	"(self isInterface and: [(self allInstances size) = 1])" "the check 'allInstances size' is not good enough for the purpose of the assignment"	self isInterface "why isn't that enough?"	ifTrue: [AssertionFailure signal: 'Interfaces can not be instantiated!!'].
 	self behavesLike do: [:tmpIF | 		(self implementsInterface: tmpIF)		 ifFalse: [AssertionFailure signal: 'Can not instantiate an Abstract class!!'].
 		"tmpIF selectorsDo:[ :tmpSelector | same notes as isImplemented method
 			(self methodIsImplemented: tmpSelector asString)
@@ -189,4 +188,4 @@ category: aCategoryName
 				ifFalse:[	^superclass methodIsImplemented: aSelector.]
 				.]
 			.].
-! !MyObject subclass: #A	instanceVariableNames: ''	classVariableNames: ''	poolDictionaries: ''	category: 'OOP3'!AnObsoleteE subclass: #F	instanceVariableNames: ''	classVariableNames: ''	poolDictionaries: ''	category: 'OOP3'!MyObject subclass: #IA	instanceVariableNames: ''	classVariableNames: ''	poolDictionaries: ''	category: 'OOP3'!
+! !
