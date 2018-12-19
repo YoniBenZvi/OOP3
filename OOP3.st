@@ -63,7 +63,7 @@ category: aCategoryName
 			instanceVariableNames: instVarNames 
 			classVariableNames: classVarNames 
 			poolDictionaries: poolDictionaries
-			category: aCategoryName).! !!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/19/2018 13:04'!subclass: aSubclassName 
+			category: aCategoryName).! !!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/19/2018 13:23'!subclass: aSubclassName 
 isInterface: isInterface 
 behavesLike: aCollection 
 instanceVariableNames: instVarNames 
@@ -98,9 +98,9 @@ category: aCategoryName
 		category: aCategoryName.
 	(newClass)  instVarNamed: 'behavesLike' put: (Set new);
 				instVarNamed: 'isInterface' put: isInterface.
-	behavesCollection := Set new..
+	behavesCollection := self behavesLike deepCopy.
 	isInterface ifTrue: [behavesCollection add: newClass].
-	(aCollection addAll: self behavesLike) do:[:tmpClass | behavesCollection add: tmpClass.
+	aCollection do:[:tmpClass | behavesCollection add: tmpClass.
 		(tmpClass behavesLike) do: [:x| behavesCollection add: x.].].
 	(newClass)  instVarNamed: 'behavesLike' put: (behavesCollection).
 	^(newClass).! !!MyObject class methodsFor: 'compiling' stamp: 'compile:where: 12/10/2018 11:39'!compile: code
