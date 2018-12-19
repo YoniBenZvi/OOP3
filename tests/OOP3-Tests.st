@@ -28,10 +28,10 @@ MyObject instVarNamed: 'behavesLike' put: {}.
 (Smalltalk hasClassNamed: #IC) ifTrue: [Smalltalk removeClassNamed: #IC].
 (Smalltalk hasClassNamed: #ID) ifTrue: [Smalltalk removeClassNamed: #ID].
 (Smalltalk hasClassNamed: #IE) ifTrue: [Smalltalk removeClassNamed: #IE].
-(Smalltalk hasClassNamed: #IF) ifTrue: [Smalltalk removeClassNamed: #IF].! !!OOP3Test methodsFor: 'as yet unclassified' stamp: 'AS 12/16/2017 15:27'!testAbstractInstantiation
+(Smalltalk hasClassNamed: #IF) ifTrue: [Smalltalk removeClassNamed: #IF].! !!OOP3Test methodsFor: 'as yet unclassified' stamp: 'Y.B.Z 12/19/2018 17:39'!testAbstractInstantiation
 	"Tests that instantiaion of an Abstract class is not possible."
 
-	| ba cd e f |
+	| ba cd e f g |
 MyObject subclass: #IA isInterface: true behavesLike: {} instanceVariableNames: '' classVariableNames: '' poolDictionaries: ''	category: 'OOP3'.
 IA compile: 'foo'.
 IA compile: 'bar: arg'.
@@ -75,17 +75,15 @@ CD compile:
 
 MyObject subclass: #E isInterface: false behavesLike: {ID} instanceVariableNames: '' classVariableNames: '' poolDictionaries: ''	category: 'OOP3'.
 E subclass: #F isInterface: false behavesLike: {} instanceVariableNames: '' classVariableNames: '' poolDictionaries: ''	category: 'OOP3'.
-	
+F subclass: #G isInterface: false behavesLike: {} instanceVariableNames: '' classVariableNames: '' poolDictionaries: ''	category: 'OOP3'.	
 	self should: [ e := E new. ] raise: AssertionFailure.
-	self should: [ f := F new. ] raise: AssertionFailure.
-
+	self should: [ f := F new. ] raise: AssertionFailure.	self should: [ g := G new. ] raise: AssertionFailure.
 E compile:
 'foobar: a arg2: b
 	^(a + b)' where: #(Integer Integer).
 	
 	self shouldnt: [ e := E new. ] raise: AssertionFailure.
-	self shouldnt: [ f := F new. ] raise: AssertionFailure.
-! !!OOP3Test methodsFor: 'as yet unclassified' stamp: 'AS 12/15/2017 23:17'!testAmbiguities
+	self shouldnt: [ f := F new. ] raise: AssertionFailure.	self shouldnt: [ g := G new. ] raise: AssertionFailure.	! !!OOP3Test methodsFor: 'as yet unclassified' stamp: 'AS 12/15/2017 23:17'!testAmbiguities
 	"Tests ambiguities between methods inehrited across interfaces."
 
 	| amb1 amb2 amb3 amb4 amb5 res |
