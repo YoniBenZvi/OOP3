@@ -18,13 +18,13 @@ Object subclass: #MyObject	instanceVariableNames: ''	classVariableNames: ''	p
 	 ^boolFlag.! !"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!MyObject class	instanceVariableNames: 'behavesLike isInterface'!!MyObject class methodsFor: 'generate' stamp: 'Y.B.Z 12/19/2018 13:11'!new	self isInterface	ifTrue: [AssertionFailure signal: 'Interfaces can not be instantiated!!'].
 	self behavesLike do: [:tmpIF | 		(self implementsInterface: tmpIF)		 ifFalse: [AssertionFailure signal: 'Can not instantiate an Abstract class!!'].
 	].
-	^ self basicNew initialize! !!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/19/2018 13:16'!ambiguities
+	^ self basicNew initialize! !!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/22/2018 11:38'!ambiguities
 	|bLikeIFs ambiguitiesCollection allOfMethods|	
-	bLikeIFs := self behavesLike.
+	bLikeIFs := self getAllBehavesLike.
 	ambiguitiesCollection := Set new.
 	allOfMethods := Set new.
 	bLikeIFs do:
-		[:tmpIF | tmpIF selectorsDo:
+		[:tmpIF | (tmpIF interfaceGetAllMethods) do:
 			[:tmpSelector | 
 				(allOfMethods addNewElement: tmpSelector)
 				ifFalse:[
@@ -63,7 +63,7 @@ category: aCategoryName
 			instanceVariableNames: instVarNames 
 			classVariableNames: classVarNames 
 			poolDictionaries: poolDictionaries
-			category: aCategoryName).! !!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/19/2018 13:23'!subclass: aSubclassName 
+			category: aCategoryName).! !!MyObject class methodsFor: 'interface' stamp: 'Y.B.Z 12/19/2018 22:37'!subclass: aSubclassName 
 isInterface: isInterface 
 behavesLike: aCollection 
 instanceVariableNames: instVarNames 
@@ -98,7 +98,7 @@ category: aCategoryName
 		category: aCategoryName.
 	(newClass)  instVarNamed: 'behavesLike' put: (Set new);
 				instVarNamed: 'isInterface' put: isInterface.
-	behavesCollection := self behavesLike deepCopy.
+	behavesCollection := self behavesLike.
 	isInterface ifTrue: [behavesCollection add: newClass].
 	aCollection do:[:tmpClass | behavesCollection add: tmpClass.
 		(tmpClass behavesLike) do: [:x| behavesCollection add: x.].].
@@ -149,10 +149,10 @@ category: aCategoryName
 	i to: (sourceCodeLinesArray size) do:
 			[:x | newCode := newCode, addTab, (sourceCodeLinesArray at:x), endL].
 	^newCode.
-! !!MyObject class methodsFor: 'auxiliary' stamp: 'compile:where: 12/10/2018 11:34'!insertEmptyMethodMarker: code
+! !!MyObject class methodsFor: 'auxiliary' stamp: 'Y.B.Z 12/23/2018 09:52'!getAllBehavesLike	"get all the interfaces that the class/interface behaves like them"	| count currBehavesLike tempBehavesLike |	count := (self behavesLike) size.	(count = 0) ifTrue: [^Set new].	currBehavesLike := self behavesLike.	[count > 0] whileTrue: [		count := 0.		tempBehavesLike := currBehavesLike.		tempBehavesLike do:		[:tmpIf | tmpIf behavesLike do:			[:tmpIfOfBeahvesLike | 				(currBehavesLike addNewElement: tmpIfOfBeahvesLike)				ifTrue:[					count := count + 1.				].			].		].	].	^currBehavesLike.! !!MyObject class methodsFor: 'auxiliary' stamp: 'compile:where: 12/10/2018 11:34'!insertEmptyMethodMarker: code
 	|endL addTab|
 	endL := Character cr asString. addTab := Character tab asString.
-	^(code , endL, addTab, '"@EMPTY_METHOD@"', endL)! !!MyObject class methodsFor: 'auxiliary' stamp: 'compile:where: 12/10/2018 11:28'!methodIsEmpty: aSourceCode
+	^(code , endL, addTab, '"@EMPTY_METHOD@"', endL)! !!MyObject class methodsFor: 'auxiliary' stamp: 'Y.B.Z 12/22/2018 11:37'!interfaceGetAllMethods	"returns all the methods of self (which suppose to be an interface) including those it gets from interfaces it behaves like them"	| bLikeIFs allMethods |	bLikeIFs := self getAllBehavesLike.	allMethods := Set new.	bLikeIFs do:		[:tmpIF | tmpIF selectorsDo:			[:tmpSelector | 				(allMethods addNewElement: tmpSelector)				].		].	^allMethods.! !!MyObject class methodsFor: 'auxiliary' stamp: 'compile:where: 12/10/2018 11:28'!methodIsEmpty: aSourceCode
 	"receives a code of a method as a string, and returns if the method is empty or not"
 	^((aSourceCode findString: '@EMPTY_METHOD@') > 0)
 ! !!MyObject class methodsFor: 'auxiliary' stamp: 'compile:where: 12/8/2018 18:40'!methodIsImplemented: aSelector
